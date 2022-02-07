@@ -1,0 +1,21 @@
+{
+  "name": "actions-playground",
+  "version": "1.0.0",
+  "description": "",
+  "main": "postprocess.js",
+  "type": "module",
+  "scripts": {
+    "fetch": "node fetch.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrSunshyne/actions-playground.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrSunshyne/actions-playground/issues"
+  },
+  "homepage": "https://github.com/MrSunshyne/actions-playground#readme"
+}
