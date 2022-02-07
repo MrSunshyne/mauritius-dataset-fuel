@@ -2,7 +2,7 @@
   "name": "actions-playground",
   "version": "1.0.0",
   "description": "",
-  "main": "postprocess.js",
+  "main": "fetch.js",
   "type": "module",
   "scripts": {
     "fetch": "node fetch.js",
