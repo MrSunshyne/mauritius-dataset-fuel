@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/MrSunshyne/actions-playground/issues"
   },
-  "homepage": "https://github.com/MrSunshyne/actions-playground#readme"
+  "homepage": "https://github.com/MrSunshyne/actions-playground#readme",
+  "dependencies": {
+    "table-scraper": "^1.0.3"
+  }
 }
