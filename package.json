@@ -1,24 +1,26 @@
 {
-  "name": "actions-playground",
+  "name": "mauritius-fuel-dataset",
   "version": "1.0.0",
-  "description": "",
-  "main": "fetch.js",
+  "description": "Automatically updated dataset of the Mauritius Fuel Prices",
   "type": "module",
   "scripts": {
-    "fetch": "node fetch.js",
+    "fetch": "esrun fetch.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrSunshyne/actions-playground.git"
+    "url": "git+https://github.com/MrSunshyne/mauritius-fuel-prices.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/MrSunshyne/actions-playground/issues"
+    "url": "https://github.com/MrSunshyne/mauritius-fuel-prices/issues"
   },
-  "homepage": "https://github.com/MrSunshyne/actions-playground#readme",
+  "homepage": "https://github.com/MrSunshyne/mauritius-fuel-prices#readme",
   "dependencies": {
     "table-scraper": "^1.0.3"
+  },
+  "devDependencies": {
+    "@digitak/esrun": "^3.1.2"
   }
 }
