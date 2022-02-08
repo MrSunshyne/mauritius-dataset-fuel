@@ -1,4 +1,4 @@
-# Mauritius Fuel Open Dataset
+# Mauritius Fuel Prices Dataset
 
 This repo keep an updated dataset of the Mauritius fuel prices by getting them from the State Trading Cooporation website using a Github Action at a regular 
 interval.
