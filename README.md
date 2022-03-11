@@ -3,7 +3,7 @@
 This repo keep an updated dataset of the Mauritius fuel prices by getting them from the State Trading Cooporation website using a Github Action at a regular
 interval.
 
-![ProjectImage](https://github.com/MrSunshyne/mauritius-dataset-fuel/raw/master/public/images/fuel.png)
+![ProjectImage](https://github.com/MrSunshyne/mauritius-dataset-fuel/raw/main/public/images/fuel.png)
 
 ## Dataset
 
