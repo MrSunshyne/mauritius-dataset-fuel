@@ -1,26 +1,19 @@
 {
   "name": "mauritius-fuel-dataset",
-  "version": "1.0.0",
-  "description": "Automatically updated dataset of the Mauritius Fuel Prices",
+  "version": "2.0.0",
+  "description": "Automatically updated dataset of Mauritius fuel prices scraped from the STC website",
   "type": "module",
   "scripts": {
-    "fetch": "esrun fetch.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "fetch": "node fetch.mjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MrSunshyne/mauritius-fuel-prices.git"
+    "url": "git+https://github.com/MrSunshyne/mauritius-dataset-fuel.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Sandeep Ramgolam",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MrSunshyne/mauritius-fuel-prices/issues"
+    "url": "https://github.com/MrSunshyne/mauritius-dataset-fuel/issues"
   },
-  "homepage": "https://github.com/MrSunshyne/mauritius-fuel-prices#readme",
-  "dependencies": {
-    "table-scraper": "^1.0.3"
-  },
-  "devDependencies": {
-    "@digitak/esrun": "^3.1.2"
-  }
+  "homepage": "https://github.com/MrSunshyne/mauritius-dataset-fuel#readme"
 }
