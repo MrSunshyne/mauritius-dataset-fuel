@@ -20,12 +20,29 @@ function parseCSV(csv) {
     .filter(Boolean)
 }
 
+async function fetchWithRetry(url, { retries = 2, timeout = 30_000 } = {}) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(timeout) })
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      return response
+    }
+    catch (err) {
+      if (attempt < retries) {
+        console.log(`Attempt ${attempt + 1} failed: ${err.message}. Retrying in 5s...`)
+        await new Promise(r => setTimeout(r, 5_000))
+      } else {
+        throw err
+      }
+    }
+  }
+}
+
 async function main() {
   const fs = await import('fs')
 
   console.log('Fetching Brent crude monthly prices from FRED...')
-  const response = await fetch(FRED_CSV_URL)
-  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  const response = await fetchWithRetry(FRED_CSV_URL)
   const csv = await response.text()
 
   const prices = parseCSV(csv)
