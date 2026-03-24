@@ -1,13 +1,15 @@
-name: Scrape STC fuel prices
+name: Scrape Brent crude prices
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    # Run on the 1st and 15th of each month — Brent data updates monthly
+    - cron: "0 6 1,15 * *"
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
@@ -17,8 +19,8 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Fetch latest fuel prices
-        run: node fetch.mjs
+      - name: Fetch latest Brent crude prices
+        run: node fetch-brent.mjs
 
       - name: Commit and push if changed
         run: |
@@ -26,5 +28,5 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add -A
           timestamp=$(date -u)
-          git commit -m "Latest STC data: ${timestamp}" || exit 0
+          git commit -m "Latest Brent data: ${timestamp}" || exit 0
           git push
