@@ -1,71 +1,71 @@
 // Zero-dependency Brent crude oil monthly price fetcher
-// Fetches monthly average spot prices from FRED (Federal Reserve Economic Data)
-// Series: DCOILBRENTEU (Europe Brent Spot Price FOB, Dollars per Barrel)
+// Primary source: datasets/oil-prices on GitHub (public domain, served from raw.githubusercontent.com)
+// Fallback: existing data/brent.json is kept if fetch fails
 
-const FRED_CSV_URL = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DCOILBRENTEU&cosd=2002-01-01&fq=Monthly&fam=avg'
+const BRENT_CSV_URL = 'https://raw.githubusercontent.com/datasets/oil-prices/main/data/brent-monthly.csv'
 
 function parseCSV(csv) {
   const lines = csv.trim().split('\n')
-  // Skip header: DATE,DCOILBRENTEU
+  // Header: Date,Price
   return lines.slice(1)
     .map(line => {
       const [dateStr, valueStr] = line.split(',')
-      if (!dateStr || !valueStr || valueStr === '.') return null
+      if (!dateStr || !valueStr) return null
       const price = parseFloat(valueStr)
       if (isNaN(price)) return null
-      // Convert "2002-01-01" to "2002-01"
+      // Convert "2002-01-15" to "2002-01"
       const date = dateStr.slice(0, 7)
       return { date, price: Math.round(price * 100) / 100 }
     })
     .filter(Boolean)
 }
 
-async function fetchWithRetry(url, { retries = 2, timeout = 30_000 } = {}) {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(timeout) })
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      return response
-    }
-    catch (err) {
-      if (attempt < retries) {
-        console.log(`Attempt ${attempt + 1} failed: ${err.message}. Retrying in 5s...`)
-        await new Promise(r => setTimeout(r, 5_000))
-      } else {
-        throw err
-      }
-    }
-  }
-}
-
 async function main() {
   const fs = await import('fs')
 
-  console.log('Fetching Brent crude monthly prices from FRED...')
-  const response = await fetchWithRetry(FRED_CSV_URL)
-  const csv = await response.text()
-
-  const prices = parseCSV(csv)
-  console.log(`Parsed ${prices.length} monthly entries`)
-
-  if (prices.length === 0) {
-    console.error('No data parsed — skipping write')
-    process.exit(1)
-  }
-
-  // Read existing data to preserve any manual entries not in FRED
+  // Read existing data first — we'll keep it if the fetch fails
   let existing = []
   try {
     existing = JSON.parse(fs.readFileSync('./data/brent.json', 'utf-8'))
   }
   catch {
-    // No existing file, start fresh
+    // No existing file
   }
 
-  // Merge: FRED data takes precedence, but keep any dates only in existing
-  const fredDates = new Set(prices.map(p => p.date))
-  const manualOnly = existing.filter(e => !fredDates.has(e.date))
-  const merged = [...prices, ...manualOnly].sort((a, b) => a.date.localeCompare(b.date))
+  let fetched = []
+  try {
+    console.log('Fetching Brent crude monthly prices from datasets/oil-prices...')
+    const response = await fetch(BRENT_CSV_URL, { signal: AbortSignal.timeout(30_000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+    const csv = await response.text()
+    fetched = parseCSV(csv)
+    console.log(`Parsed ${fetched.length} monthly entries`)
+  }
+  catch (err) {
+    console.warn(`Fetch failed: ${err.message}`)
+    if (existing.length > 0) {
+      console.log(`Keeping existing brent.json (${existing.length} entries)`)
+      return
+    }
+    throw err
+  }
+
+  // Filter to 2002+ to match Mauritius fuel price data range
+  const filtered = fetched.filter(p => p.date >= '2002-01')
+
+  if (filtered.length === 0) {
+    console.warn('No data after filtering — keeping existing brent.json')
+    return
+  }
+
+  // Merge: fetched data takes precedence, but keep any dates only in existing
+  // (e.g. manually added recent months not yet in the upstream dataset)
+  const fetchedDates = new Set(filtered.map(p => p.date))
+  const manualOnly = existing.filter(e => !fetchedDates.has(e.date))
+  if (manualOnly.length > 0) {
+    console.log(`Preserving ${manualOnly.length} entries not in upstream: ${manualOnly.map(e => e.date).join(', ')}`)
+  }
+  const merged = [...filtered, ...manualOnly].sort((a, b) => a.date.localeCompare(b.date))
 
   fs.writeFileSync('./data/brent.json', JSON.stringify(merged, null, 2))
   console.log(`Written ${merged.length} entries to brent.json`)
