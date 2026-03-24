@@ -17,8 +17,11 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Fetch latest data
+      - name: Fetch latest fuel prices
         run: node fetch.mjs
+
+      - name: Fetch latest Brent crude prices
+        run: node fetch-brent.mjs
 
       - name: Commit and push if changed
         run: |

@@ -4,7 +4,9 @@
   "description": "Automatically updated dataset of Mauritius fuel prices scraped from the STC website",
   "type": "module",
   "scripts": {
-    "fetch": "node fetch.mjs"
+    "fetch": "node fetch.mjs",
+    "fetch:brent": "node fetch-brent.mjs",
+    "fetch:all": "node fetch.mjs && node fetch-brent.mjs"
   },
   "repository": {
     "type": "git",
