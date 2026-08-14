@@ -71,15 +71,42 @@ function extractTable(html) {
   return rows
 }
 
+async function fetchHtml(attempts = 3) {
+  // The STC site intermittently serves a 200 response with no price table
+  // (seen 2026-08-14). Retry before giving up so a transient blip is not
+  // mistaken for "the table is gone".
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const response = await fetch(URL)
+      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      const html = await response.text()
+
+      const rows = extractTable(html)
+      if (rows.length > 0) return { html, rows }
+
+      throw new Error(`response contained no table rows (${html.length} bytes)`)
+    } catch (err) {
+      console.error(`Attempt ${attempt}/${attempts} failed: ${err.message}`)
+      if (attempt === attempts) throw err
+      await new Promise(resolve => setTimeout(resolve, attempt * 5000))
+    }
+  }
+}
+
+function readExisting(fs, path) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(path, 'utf8'))
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
 async function main() {
   const fs = await import('fs')
 
   console.log(`Fetching ${URL}...`)
-  const response = await fetch(URL)
-  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-  const html = await response.text()
-
-  const rows = extractTable(html)
+  const { rows } = await fetchHtml()
   console.log(`Found ${rows.length} table rows`)
 
   // Skip header rows (contain "Rs/Litre" or non-numeric price values)
@@ -109,6 +136,20 @@ async function main() {
     })
     .filter(Boolean)
     .sort((a, b) => b.date.localeCompare(a.date)) // newest first
+
+  // Never overwrite good data with a bad scrape. The STC table only ever grows,
+  // so an empty or shrinking result means the scrape failed, not that prices vanished.
+  if (clean.length === 0) {
+    throw new Error(`Parsed 0 price rows from ${rows.length} table rows — refusing to write`)
+  }
+
+  const existing = readExisting(fs, './data/prices.json')
+  if (clean.length < existing.length && process.env.ALLOW_SHRINK !== '1') {
+    throw new Error(
+      `Parsed ${clean.length} rows but ${existing.length} already exist — refusing to overwrite. ` +
+        `Set ALLOW_SHRINK=1 if the STC table genuinely shrank.`
+    )
+  }
 
   const today = new Date().toISOString().slice(0, 10)
 
