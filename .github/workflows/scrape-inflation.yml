@@ -1,0 +1,32 @@
+name: Scrape Mauritius inflation
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run on the 1st and 15th of each month — inflation data updates monthly
+    - cron: "0 6 1,15 * *"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Fetch latest inflation data
+        run: node fetch-inflation.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          timestamp=$(date -u)
+          git commit -m "Latest inflation data: ${timestamp}" || exit 0
+          git push

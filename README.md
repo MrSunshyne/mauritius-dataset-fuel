@@ -32,6 +32,22 @@ Legacy format preserving the original STC date strings:
 ]
 ```
 
+### [`data/inflation.json`](https://github.com/MrSunshyne/mauritius-dataset-fuel/blob/main/data/inflation.json)
+
+Monthly Mauritius inflation, sorted oldest first, from January 2001:
+
+```json
+[
+  { "date": "2026-07", "cpi": 112.9, "headline": 4, "yoy": 4.4 }
+]
+```
+
+- `headline`: headline inflation in %, the 12-month average change in prices relative to the previous 12 months ([Bank of Mauritius](https://bomstats.bom.mu/#/en/mu2/categories/RFS/RFS_I/MU2,DF_INF,1.0), from July 2007, `null` before)
+- `yoy`: year-on-year inflation in %, the change in the CPI from the same month a year earlier (Bank of Mauritius, from July 2007, `null` before)
+- `cpi`: consumer price index, 2023 = 100 ([IMF](https://data.imf.org), compiled from Statistics Mauritius). Divide two months' values to adjust a price for inflation. Where the IMF value is missing, or its implied year-on-year change is more than 1 point away from the Bank of Mauritius rate, the index is derived from the value 12 months earlier and the Bank of Mauritius rate.
+
+Updated on the 1st and 15th of each month by `fetch-inflation.mjs`.
+
 ### `data/history/`
 
 Daily snapshots in `{YYYY-MM-DD}.json` format, archived since 2022.
