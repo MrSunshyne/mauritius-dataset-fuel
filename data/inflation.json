@@ -1840,5 +1840,17 @@
     "cpi": 112.9,
     "headline": 4,
     "yoy": 4.4
+  },
+  {
+    "date": "2026-08",
+    "cpi": 112.6,
+    "headline": null,
+    "yoy": null
+  },
+  {
+    "date": "2026-09",
+    "cpi": 113.4,
+    "headline": null,
+    "yoy": null
   }
 ]
