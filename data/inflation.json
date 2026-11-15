@@ -1844,13 +1844,19 @@
   {
     "date": "2026-08",
     "cpi": 112.6,
-    "headline": null,
-    "yoy": null
+    "headline": 4,
+    "yoy": 4.9
   },
   {
     "date": "2026-09",
     "cpi": 113.4,
-    "headline": null,
-    "yoy": null
+    "headline": 4.1,
+    "yoy": 5.7
+  },
+  {
+    "date": "2026-10",
+    "cpi": 114.81,
+    "headline": 4.3,
+    "yoy": 6.4
   }
 ]
