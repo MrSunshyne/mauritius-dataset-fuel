@@ -18,5 +18,6 @@
   "bugs": {
     "url": "https://github.com/MrSunshyne/mauritius-dataset-fuel/issues"
   },
-  "homepage": "https://github.com/MrSunshyne/mauritius-dataset-fuel#readme"
+  "homepage": "https://github.com/MrSunshyne/mauritius-dataset-fuel#readme",
+  "packageManager": "pnpm@12.21.0"
 }
