@@ -64,7 +64,7 @@ const prices = await res.json()
 
 ## Example applications
 
-- [Mauritius Fuel Prices](https://mauritius-fuel-prices.netlify.app/)
+- [Mauritius Fuel Prices](https://fuel-prices.ramgolam.com/)
 
 ## How it works
 
